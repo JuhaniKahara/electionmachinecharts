@@ -1,0 +1,7 @@
+frontend/build
+frontend/node_modules
+backend/build
+backend/src/main/resources/static
+backend/src/main/generated
+backend/.gradle
+.DS_Store
