@@ -1,3 +1,4 @@
+import { Summary, Option } from "./types";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -6,8 +7,8 @@ import {
   Title,
   Tooltip,
   Legend,
-} from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -18,11 +19,11 @@ ChartJS.register(
 );
 
 export const options = {
-  indexAxis: 'y' as const,
+  indexAxis: "y" as const,
   plugins: {
     title: {
       display: true,
-      text: 'Chart.js Bar Chart - Stacked',
+      text: "Yle vaalikonevastaukset 2023",
     },
   },
   responsive: true,
@@ -36,34 +37,55 @@ export const options = {
   },
 };
 
-const labels = ['Kokoomus', 'Liberaalipuolue'];
+function getData(
+  allData: Summary[],
+  field: "countOnes" | "countTwos" | "countFours" | "countFives",
+  parties: Option[]
+) {
+  let data: number[] = [];
+  parties.forEach((party) => {
+    data.push(
+      allData.filter((x: Summary) => x.partyId === party.value)[0][field] /
+        allData.filter((x: Summary) => x.partyId === party.value)[0][
+          "countTotal"
+        ]
+    );
+  });
+  console.log(data);
+  return data;
+}
 
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Täysin eri mieltä',
-      data: [5,20],
-      backgroundColor: 'rgb(255, 99, 132)',
-    },
-    {
-      label: 'Jokseenkin eri mieltä',
-      data: [5,20],
-      backgroundColor: 'rgb(75, 192, 192)',
-    },
-    {
-      label: 'Jokseenkin samaa mieltä',
-      data: [5,20],
-      backgroundColor: 'rgb(53, 162, 235)',
-    },
-    {
-      label: 'Täysin samaa mieltä',
-      data: [55,20],
-      backgroundColor: 'rgb(53, 162, 235)',
-    },
-  ],
-};
+export default function Chart(props: any) {
+  if (props.parties.length === 0 || props.data.length === 0) return null;
+  console.log("a");
+  console.log(props.data);
+  console.log(props.parties);
+  const chartData = {
+    labels: props.parties.map((x: Option) => x.label) || [],
+    datasets: [
+      {
+        label: "Täysin eri mieltä",
+        data: getData(props.data, "countOnes", props.parties),
+        backgroundColor: "rgb(255, 99, 132)",
+      },
+      {
+        label: "Jokseenkin eri mieltä",
+        data: getData(props.data, "countTwos", props.parties),
+        backgroundColor: "rgb(235, 195, 52)",
+      },
+      {
+        label: "Jokseenkin samaa mieltä",
+        data: getData(props.data, "countFours", props.parties),
+        backgroundColor: "rgb(53, 162, 235)",
+      },
+      {
+        label: "Täysin samaa mieltä",
+        data: getData(props.data, "countFives", props.parties),
+        backgroundColor: "rgb(10, 201, 57)",
+      },
+    ],
+  };
+  console.log(chartData);
 
-export default function Chart() {
-  return <Bar options={options} data={data} />;
+  return <Bar options={options} data={chartData} />;
 }

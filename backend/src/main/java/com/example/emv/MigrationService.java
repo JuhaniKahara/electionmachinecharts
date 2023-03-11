@@ -1,29 +1,17 @@
 package com.example.emv;
 
-import com.example.emv.dao.AnswerDao;
-import com.example.emv.dao.CandidateDao;
-import com.example.emv.dao.ConstitutiencyDao;
-import com.example.emv.dao.PartyDao;
+import com.example.emv.dao.*;
 import com.example.emv.models.Candidate;
-import com.example.emv.models.Constitutiency;
+import com.example.emv.models.Constituency;
 import com.example.emv.models.Party;
+import com.example.emv.models.QuestionCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 @Component
 @ConditionalOnProperty(value = "migration.enabled", havingValue = "true")
@@ -36,22 +24,31 @@ public class MigrationService {
     AnswerDao answerDao;
 
     @Autowired
-    ConstitutiencyDao constitutiencyDao;
+    ConstitutiencyDao constituencyDao;
 
     @Autowired
     PartyDao partyDao;
+
+    @Autowired
+    QuestionDao questionDao;
 
 
     @EventListener(ApplicationReadyEvent.class)
     public void afterApplicationStartup() {
         String baseUrl = "https://vaalit.yle.fi/vaalikone/eduskuntavaalit2023/api/public/constituencies/";
         RestTemplate restTemplate = new RestTemplate();
-        Constitutiency[] constitutiencies = restTemplate.getForEntity(baseUrl, Constitutiency[].class).getBody();
-        constitutiencyDao.saveAll(Arrays.asList(constitutiencies));
-        for (Constitutiency constitutiency : constitutiencies){
-            // An API with all the parties was not found, so we have to query for parties per constitutiency
+        Constituency[] constituencies = restTemplate.getForEntity(baseUrl, Constituency[].class).getBody();
+        constituencyDao.saveAll(Arrays.asList(constituencies));
+        for (Constituency constitutiency : constituencies){
+            // An API with all the parties was not found, so we have to query for parties per constituency
             Party[] parties = restTemplate.getForEntity(baseUrl + constitutiency.getId() + "/parties" , Party[].class).getBody();
             partyDao.saveAll(Arrays.asList(parties));
+
+            // Questions also have only constitutiency based APIs
+            QuestionCategory[] questionCategories = restTemplate.getForEntity(baseUrl + constitutiency.getId() + "/questions" , QuestionCategory[].class).getBody();
+            for (QuestionCategory questionCategory: questionCategories){
+                questionDao.saveAll(questionCategory.getQuestions());
+            }
 
             // List of all candidates in the constitutiency
             Candidate[] candidates = restTemplate.getForEntity(baseUrl + constitutiency.getId() + "/candidates" , Candidate[].class).getBody();

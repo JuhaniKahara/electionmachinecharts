@@ -1,10 +1,10 @@
 package com.example.emv.controller;
 
-import com.example.emv.dao.ConstitutiencyDao;
 import com.example.emv.dao.PartyDao;
+import com.example.emv.dao.QuestionDao;
 import com.example.emv.dao.SummaryDao;
-import com.example.emv.models.Constitutiency;
 import com.example.emv.models.Party;
+import com.example.emv.models.Question;
 import com.example.emv.models.Summary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ import java.util.List;
 public class FirstController {
 
     @Autowired
-    ConstitutiencyDao constitutiencyDao;
+    QuestionDao questionDao;
 
     @Autowired
     SummaryDao summaryDao;
@@ -29,9 +29,14 @@ public class FirstController {
         return partyDao.findAll();
     }
 
+    @GetMapping("/question")
+    public List<Question> getQuestions (){
+        return questionDao.findAllByConstituencyIdIsNull();
+    }
+
     @GetMapping("/summary")
-    public List<Summary> getData (@RequestParam(required = false) Integer questionId){
-        return summaryDao.findAllByQuestionIdOrderByPartyIdAsc(questionId);
+    public List<Summary> getData (){
+        return summaryDao.findAll();
     }
 
 }

@@ -12,10 +12,11 @@ import org.hibernate.annotations.Immutable;
 public class Summary {
     @Id @JsonIgnore
     String id;
-    Integer questionId;
-    Integer answer;
-    Integer numAnswers;
     Integer partyId;
-
-
+    Integer questionId;
+    Integer countOnes;
+    Integer countTwos;
+    Integer countFours;
+    Integer countFives;
+    Integer countTotal;
 }

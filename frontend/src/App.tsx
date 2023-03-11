@@ -1,64 +1,73 @@
-import  { useState, useEffect } from "react";
-import Select, { MultiValue } from 'react-select'
-import './App.css';
-import Chart from './Graph';
-
-
-
-function fetchAPI() {
-  return fetch("http://localhost:8080/api/summary?8",{ method: 'GET' }).then(data => data.json()) // Parsing the data into a JavaScript object
-  .then(json => alert(JSON.stringify(json)))
-}
-
-interface Party {
-  id: number
-  name_fi: string
-  color: string
-}
-
-interface Option {
-  value: number
-  label: string
-
-}
-
+import { useState, useEffect } from "react";
+import Select, { MultiValue } from "react-select";
+import "./App.css";
+import Chart from "./Graph";
+import { Option, Summary, Party, Question } from "./types";
 
 function App() {
   const [partyOptions, setPartyOptions] = useState<Option[]>([]);
-  const [selectedParties, setSelectedParties] = useState<MultiValue<Option>>([]);
-
-  const changeSelectedParties = (value: any) => setSelectedParties(value);
-
-
+  const [selectedParties, setSelectedParties] = useState<MultiValue<Option>>(
+    []
+  );
+  const [questionOptions, setQuestionOptions] = useState<MultiValue<Option>>(
+    []
+  );
+  const [selectedQuestion, setSelectedQuestion] = useState<Option | null>({
+    value: 0,
+    label: "0",
+  });
+  const [summary, setSummary] = useState<Summary[]>([]);
 
   useEffect(() => {
-    fetch(
-      `http://localhost:8080/api/party`,
-      {
-        method: "GET",
-      }
-    )
-      .then(res => res.json())
-      .then(response => {
-        setPartyOptions(response.map((x: Party) => ({"value":x.id, "label": x.name_fi})));
-      })
-      .catch(error => console.log(error));
+    Promise.all([
+      fetch(`http://localhost:8080/api/party`, { method: "GET" }),
+      fetch(`http://localhost:8080/api/question`, { method: "GET" }),
+      fetch(`http://localhost:8080/api/summary`, { method: "GET" }),
+    ])
+      .then(([resParties, resQuestions, resSummary]) =>
+        Promise.all([resParties.json(), resQuestions.json(), resSummary.json()])
+      )
+      .then(([dataParties, dataQuestions, dataSummary]) => {
+        console.log(dataParties);
+        console.log(dataQuestions);
+        setPartyOptions(
+          dataParties.map((x: Party) => ({ value: x.id, label: x.name_fi }))
+        );
+        setQuestionOptions(
+          dataQuestions.map((x: Question) => ({
+            value: x.id,
+            label: x.text_fi,
+          }))
+        );
+        setSummary(dataSummary);
+      });
   }, []);
 
   return (
     <div>
-       <Select 
-          isMulti={true}
-          options={partyOptions}
-          className="basic-multi-select"
-          classNamePrefix="select"
-          value={selectedParties}
-          onChange={(value) => changeSelectedParties(value)}
-        />
-        <Chart></Chart>
-        <button onClick={()=>console.log(partyOptions)}>test</button>
-        <button onClick={()=>console.log(selectedParties)}>test</button>
-
+      <Select
+        isMulti={true}
+        options={partyOptions}
+        className="basic-multi-select"
+        classNamePrefix="select"
+        value={selectedParties}
+        onChange={(value) => setSelectedParties(value)}
+      />
+      <Select
+        options={questionOptions}
+        className="basic-multi-select"
+        classNamePrefix="select"
+        value={selectedQuestion}
+        onChange={(value) => setSelectedQuestion(value)}
+      />
+      <Chart
+        data={summary.filter(
+          (x) =>
+            selectedParties.map((x) => x.value).includes(x.partyId) &&
+            x.questionId === selectedQuestion?.value
+        )}
+        parties={selectedParties}
+      ></Chart>
     </div>
   );
 }

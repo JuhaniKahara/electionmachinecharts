@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
-@Table(schema = "emv", name = "constitutiency")
+@Table(schema = "emv", name = "constituency")
 @Data
-public class Constitutiency {
+public class Constituency {
 
     @Id
     Integer id;
