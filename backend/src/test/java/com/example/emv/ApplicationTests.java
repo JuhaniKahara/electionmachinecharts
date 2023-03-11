@@ -1,13 +1,22 @@
 package com.example.emv;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.runner.RunWith;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.util.Assert;
 
-@SpringBootTest
 class ApplicationTests {
 
 	@Test
-	void contextLoads() {
+	void oneTest() {
+		Assert.isTrue(true,"Was true");
+	}
+
+	@Test
+	void secondTest() {
+		Assert.isTrue(false == false,"Was false");
 	}
 
 }

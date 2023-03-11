@@ -1,0 +1,46 @@
+services:
+  db:
+    image: postgres:12
+    hostname: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: example
+      PGDATA: /data/postgres
+    ports:
+      - "5432:5432"
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1000M
+        reservations:
+          cpus: "2"
+          memory: 1000M
+    volumes:
+      - ~/docker-volumes/postgres_new:/data/postgres
+      - ./docker_init_db.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - 80:80
+    depends_on:
+      - db
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: pgadmin
+      PGADMIN_DEFAULT_PASSWORD: example
+    volumes:
+      - ~/docker-volumes/pgadmin:/root/.pgadmin
+  electionmachinecharts:
+    image: electionmachinecharts:1.0
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    restart: always
+    environment:
+      MIGRATION_ENABLED: "false"
+
+volumes:
+  postgres_new:
+  pgadmin:

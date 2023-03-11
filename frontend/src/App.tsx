@@ -20,9 +20,9 @@ function App() {
 
   useEffect(() => {
     Promise.all([
-      fetch(`http://localhost:8080/api/party`, { method: "GET" }),
-      fetch(`http://localhost:8080/api/question`, { method: "GET" }),
-      fetch(`http://localhost:8080/api/summary`, { method: "GET" }),
+      fetch(`http://localhost:8080/emv/api/party`, { method: "GET" }),
+      fetch(`http://localhost:8080/emv/api/question`, { method: "GET" }),
+      fetch(`http://localhost:8080/emv/api/summary`, { method: "GET" }),
     ])
       .then(([resParties, resQuestions, resSummary]) =>
         Promise.all([resParties.json(), resQuestions.json(), resSummary.json()])

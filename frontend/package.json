@@ -1,5 +1,6 @@
 {
-  "name": "my-app",
+  "name": "emv",
+  "homepage": "/emv/",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
