@@ -44,29 +44,37 @@ function App() {
   }, []);
 
   return (
-    <div style={{ maxWidth: "70%" }}>
-      <Select
-        placeholder={"Valitse puolue"}
-        isMulti={true}
-        options={partyOptions}
-        value={selectedParties}
-        onChange={(value) => setSelectedParties(value)}
-      />
-      <Select
-        placeholder={"Valitse kysymys"}
-        options={questionOptions}
-        value={selectedQuestion}
-        onChange={(value) => setSelectedQuestion(value)}
-      />
-      <Chart
-        data={summary.filter(
-          (x) =>
-            selectedParties.map((x) => x.value).includes(x.partyId) &&
-            x.questionId === selectedQuestion?.value
-        )}
-        parties={selectedParties}
-      ></Chart>
-    </div>
+    <center>
+      <div style={{ maxWidth: "70%", paddingTop: "20px" }}>
+        <Select
+          placeholder={"Valitse puolue"}
+          isMulti={true}
+          options={partyOptions}
+          value={selectedParties}
+          onChange={(value) => setSelectedParties(value)}
+        />
+        <Select
+          placeholder={"Valitse kysymys"}
+          options={questionOptions}
+          value={selectedQuestion}
+          onChange={(value) => setSelectedQuestion(value)}
+        />
+        <h2>
+          {selectedQuestion && selectedQuestion.value !== 0
+            ? selectedQuestion.label
+            : ""}
+        </h2>
+        <Chart
+          data={summary.filter(
+            (x) =>
+              selectedParties.map((x) => x.value).includes(x.partyId) &&
+              x.questionId === selectedQuestion?.value
+          )}
+          parties={selectedParties}
+        ></Chart>
+        <h6 style={{ textAlign: "right" }}>Ylen vaalikone 2023</h6>
+      </div>
+    </center>
   );
 }
 

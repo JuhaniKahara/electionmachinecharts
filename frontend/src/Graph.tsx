@@ -20,25 +20,6 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
-  indexAxis: "y" as const,
-  plugins: {
-    title: {
-      display: true,
-      text: "Yle vaalikonevastaukset 2023",
-    },
-  },
-  responsive: true,
-  scales: {
-    x: {
-      stacked: true,
-    },
-    y: {
-      stacked: true,
-    },
-  },
-};
-
 export function getData(
   allData: Summary[],
   field: "countOnes" | "countTwos" | "countFours" | "countFives",
@@ -61,28 +42,46 @@ export default function Chart(props: {
   parties: MultiValue<Option>;
 }) {
   if (props.parties.length === 0 || props.data.length === 0) return null;
+
+  const options = {
+    indexAxis: "y" as const,
+    responsive: true,
+    scales: {
+      x: {
+        stacked: true,
+      },
+      y: {
+        stacked: true,
+      },
+    },
+  };
+
   const chartData = {
     labels: props.parties.map((x: Option) => x.label) || [],
     datasets: [
       {
         label: "Täysin eri mieltä",
         data: getData(props.data, "countOnes", props.parties),
-        backgroundColor: "rgb(255, 99, 132)",
+        backgroundColor: "rgb(251,39,41)",
+        barThickness: 35,
       },
       {
         label: "Jokseenkin eri mieltä",
         data: getData(props.data, "countTwos", props.parties),
-        backgroundColor: "rgb(235, 195, 52)",
+        backgroundColor: "rgb(255, 130, 130)",
+        barThickness: 35,
       },
       {
         label: "Jokseenkin samaa mieltä",
         data: getData(props.data, "countFours", props.parties),
-        backgroundColor: "rgb(53, 162, 235)",
+        backgroundColor: "rgb(131, 252, 135)",
+        barThickness: 35,
       },
       {
         label: "Täysin samaa mieltä",
         data: getData(props.data, "countFives", props.parties),
-        backgroundColor: "rgb(10, 201, 57)",
+        backgroundColor: "rgb(18, 219, 24)",
+        barThickness: 35,
       },
     ],
   };
