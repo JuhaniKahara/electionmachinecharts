@@ -1,7 +1,7 @@
 # electionmachinecharts
 Create charts from parliamentary election candidates' replies to election questionnaire (vaalikone in Finnish).
 
-<img src="https://user-images.githubusercontent.com/28629173/224551070-2f4c4484-1110-4db1-963e-8506cb8f01cf.png" width="800" height="500">
+<img src="https://user-images.githubusercontent.com/28629173/224566328-6e46dcbe-247c-450e-aed7-8f7a1957f1c8.png" width="700" height="500">
 
 ## Requirements to run the program
 - Docker
