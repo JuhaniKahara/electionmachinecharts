@@ -1,4 +1,6 @@
 import { Summary, Option } from "./types";
+import { MultiValue } from "react-select";
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -37,10 +39,10 @@ export const options = {
   },
 };
 
-function getData(
+export function getData(
   allData: Summary[],
   field: "countOnes" | "countTwos" | "countFours" | "countFives",
-  parties: Option[]
+  parties: MultiValue<Option>
 ) {
   let data: number[] = [];
   parties.forEach((party) => {
@@ -51,15 +53,14 @@ function getData(
         ]
     );
   });
-  console.log(data);
   return data;
 }
 
-export default function Chart(props: any) {
+export default function Chart(props: {
+  data: Summary[];
+  parties: MultiValue<Option>;
+}) {
   if (props.parties.length === 0 || props.data.length === 0) return null;
-  console.log("a");
-  console.log(props.data);
-  console.log(props.parties);
   const chartData = {
     labels: props.parties.map((x: Option) => x.label) || [],
     datasets: [
@@ -85,7 +86,5 @@ export default function Chart(props: any) {
       },
     ],
   };
-  console.log(chartData);
-
   return <Bar options={options} data={chartData} />;
 }

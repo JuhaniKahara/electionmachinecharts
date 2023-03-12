@@ -13,5 +13,4 @@ public class Party {
 
     String name_fi;
 
-    String color;
 }

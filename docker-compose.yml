@@ -19,28 +19,16 @@ services:
     volumes:
       - ~/docker-volumes/postgres_new:/data/postgres
       - ./docker_init_db.sql:/docker-entrypoint-initdb.d/docker_postgres_init.sql
-  pgadmin:
-    image: dpage/pgadmin4
-    ports:
-      - 80:80
-    depends_on:
-      - db
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: pgadmin
-      PGADMIN_DEFAULT_PASSWORD: example
-    volumes:
-      - ~/docker-volumes/pgadmin:/root/.pgadmin
   electionmachinecharts:
-    image: electionmachinecharts:1.0
+    image: europe-north1-docker.pkg.dev/fine-climber-216412/electionmachinecharts/electionmachinecharts:1.0
     ports:
       - 8080:8080
     depends_on:
       - db
     restart: always
     environment:
-      MIGRATION_ENABLED: "false"
+      MIGRATION_ENABLED: "true"
+      DATA_SOURCE_URL: "jdbc:postgresql://postgres:5432/electionmachinecharts"
 
 volumes:
   postgres_new:
-  pgadmin:

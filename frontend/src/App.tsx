@@ -14,7 +14,7 @@ function App() {
   );
   const [selectedQuestion, setSelectedQuestion] = useState<Option | null>({
     value: 0,
-    label: "0",
+    label: "Valitse kysymys",
   });
   const [summary, setSummary] = useState<Summary[]>([]);
 
@@ -44,19 +44,17 @@ function App() {
   }, []);
 
   return (
-    <div>
+    <div style={{ maxWidth: "70%" }}>
       <Select
+        placeholder={"Valitse puolue"}
         isMulti={true}
         options={partyOptions}
-        className="basic-multi-select"
-        classNamePrefix="select"
         value={selectedParties}
         onChange={(value) => setSelectedParties(value)}
       />
       <Select
+        placeholder={"Valitse kysymys"}
         options={questionOptions}
-        className="basic-multi-select"
-        classNamePrefix="select"
         value={selectedQuestion}
         onChange={(value) => setSelectedQuestion(value)}
       />

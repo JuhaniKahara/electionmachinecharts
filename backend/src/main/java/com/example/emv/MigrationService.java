@@ -12,6 +12,7 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 @ConditionalOnProperty(value = "migration.enabled", havingValue = "true")
@@ -37,6 +38,13 @@ public class MigrationService {
     public void afterApplicationStartup() {
         String baseUrl = "https://vaalit.yle.fi/vaalikone/eduskuntavaalit2023/api/public/constituencies/";
         RestTemplate restTemplate = new RestTemplate();
+        // We will not fetch the data unless if the data has been fetched earlier. Let's check this by querying constituencies
+        List<Constituency> testEmpty = constituencyDao.findAll();
+        if (testEmpty.size() != 0)
+        {
+            return;
+        }
+
         Constituency[] constituencies = restTemplate.getForEntity(baseUrl, Constituency[].class).getBody();
         constituencyDao.saveAll(Arrays.asList(constituencies));
         for (Constituency constitutiency : constituencies){
@@ -60,8 +68,6 @@ public class MigrationService {
                         baseUrl + constitutiency.getId() + "/candidates/" + candidate.getId(), Candidate.class).getBody();
                 answerDao.saveAll(oneCandidate.getAnswers());
             }
-
         }
-
     }
 }
